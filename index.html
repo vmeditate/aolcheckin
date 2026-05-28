@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Art of Living · Event Check-In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --peach: #FFD6C0;
+    --peach-dark: #F4A07A;
+    --peach-text: #8B4A2A;
+    --sage: #C8E6C9;
+    --sage-dark: #7CB98A;
+    --sage-text: #2E5E35;
+    --sky: #C5E3F7;
+    --sky-dark: #6BAED6;
+    --sky-text: #1A4F6E;
+    --lavender: #DDD6F3;
+    --lavender-dark: #9D8FD4;
+    --lavender-text: #3D2E7C;
+    --amber: #FFF0C0;
+    --amber-dark: #F0C040;
+    --amber-text: #7A5A00;
+    --rose: #FADADD;
+    --rose-dark: #E8909A;
+    --rose-text: #7A2030;
+    --bg: #FFF8F3;
+    --card: #FFFFFF;
+    --border: rgba(200,160,120,0.2);
+    --text: #4A3728;
+    --text-muted: #9A7E6E;
+    --font-head: 'Quicksand', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 12px rgba(180,120,80,0.10);
+    --shadow-card: 0 4px 20px rgba(180,120,80,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image: radial-gradient(circle at 20% 20%, #FFE8D6 0%, transparent 50%),
+                      radial-gradient(circle at 80% 80%, #E8F5E9 0%, transparent 50%),
+                      radial-gradient(circle at 60% 10%, #E3F2FD 0%, transparent 40%);
+  }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── SETUP SCREEN ── */
+  #screen-setup {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+  }
+  #screen-setup.active { display: flex; }
+
+  .setup-hero {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .lotus {
+    font-size: 52px;
+    display: block;
+    margin-bottom: 12px;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .setup-hero h1 {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .setup-hero p {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .setup-box {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid var(--border);
+  }
+
+  .field { margin-bottom: 1.25rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 7px;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus {
+    border-color: var(--peach-dark);
+    box-shadow: 0 0 0 3px rgba(244,160,122,0.15);
+  }
+  .field input::placeholder { color: #C0A898; }
+
+  .hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .btn-start {
+    width: 100%;
+    max-width: 440px;
+    margin-top: 1.25rem;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--peach-dark), #E07050);
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 16px rgba(224,112,80,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-start:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(224,112,80,0.25); }
+
+  .schema-hint {
+    width: 100%;
+    max-width: 440px;
+    margin-top: 1rem;
+    background: var(--amber);
+    border: 1px solid var(--amber-dark);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .schema-hint p { font-size: 12px; font-weight: 700; color: var(--amber-text); margin-bottom: 6px; }
+  .schema-hint code {
+    font-size: 11px;
+    color: var(--amber-text);
+    line-height: 1.9;
+    display: block;
+    font-family: monospace;
+  }
+
+  /* ── MAIN SCREEN ── */
+  #screen-main { min-height: 100vh; padding-bottom: 2rem; }
+
+  .top-bar {
+    background: linear-gradient(135deg, var(--peach) 0%, #FFE4D6 50%, var(--sage) 100%);
+    padding: 16px 1.25rem 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    box-shadow: 0 2px 12px rgba(180,120,80,0.08);
+  }
+  .top-bar .logo { font-size: 24px; }
+  .top-bar-text { flex: 1; }
+  .top-bar h1 {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .top-bar .event-url {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+  .vol-chip {
+    background: white;
+    border-radius: 20px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--peach-text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    white-space: nowrap;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+
+  .main-body { padding: 1.25rem; }
+
+  /* COUNT CARDS */
+  .counts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .count-card {
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: var(--shadow);
+  }
+  .count-card .lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.75; }
+  .count-card .num { font-family: var(--font-head); font-size: 28px; font-weight: 700; line-height: 1; }
+  .count-card.c-arrived  { background: var(--sage);     color: var(--sage-text); }
+  .count-card.c-remaining{ background: var(--sky);      color: var(--sky-text); }
+  .count-card.c-noshow   { background: var(--rose);     color: var(--rose-text); }
+  .count-card.c-cancelled{ background: var(--amber);    color: var(--amber-text); }
+
+  /* ACTION BUTTONS */
+  .action-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .action-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: var(--shadow);
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .action-btn:active { transform: scale(0.97); box-shadow: none; }
+  .action-btn .icon { font-size: 16px; }
+
+  /* FILTER TABS */
+  .filter-scroll { overflow-x: auto; margin-bottom: 1rem; padding-bottom: 2px; }
+  .filter-scroll::-webkit-scrollbar { display: none; }
+  .filter-tabs { display: flex; gap: 6px; width: max-content; }
+  .f-tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .f-tab.active { background: var(--peach); border-color: var(--peach-dark); color: var(--peach-text); }
+
+  /* SEARCH */
+  .search-wrap { position: relative; margin-bottom: 1rem; }
+  .search-wrap input {
+    width: 100%;
+    padding: 11px 14px 11px 40px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    background: white;
+    outline: none;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--peach-dark); }
+  .search-wrap input::placeholder { color: #C0A898; }
+  .search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 17px;
+    opacity: 0.4;
+  }
+
+  /* GUEST CARDS */
+  .guest-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .guest-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    padding: 14px;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s;
+  }
+  .guest-card.s-arrived   { border-color: var(--sage-dark);   border-left: 4px solid var(--sage-dark); }
+  .guest-card.s-noshow    { border-color: var(--rose-dark);    border-left: 4px solid var(--rose-dark); }
+  .guest-card.s-cancelled { border-color: var(--amber-dark);  border-left: 4px solid var(--amber-dark); }
+
+  .g-name { font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .g-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+  }
+  .badge-type { background: var(--lavender); color: var(--lavender-text); border-color: var(--lavender-dark); }
+  .badge-tier { background: var(--sky); color: var(--sky-text); border-color: var(--sky-dark); }
+  .badge-wb   { background: var(--peach); color: var(--peach-text); border-color: var(--peach-dark); font-weight: 700; }
+  .badge-wb.wb-gold   { background: var(--amber); color: var(--amber-text); border-color: var(--amber-dark); }
+  .badge-wb.wb-silver { background: #EEE; color: #555; border-color: #AAA; }
+  .badge-wb.wb-green  { background: var(--sage); color: var(--sage-text); border-color: var(--sage-dark); }
+  .badge-wb.wb-blue   { background: var(--sky); color: var(--sky-text); border-color: var(--sky-dark); }
+  .badge-wb.wb-red    { background: var(--rose); color: var(--rose-text); border-color: var(--rose-dark); }
+
+  .g-by { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+  .g-by span { font-weight: 600; color: var(--text); }
+
+  .toggle-row { display: flex; gap: 6px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .tog {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: #FAFAFA;
+    cursor: pointer;
+    color: var(--text-muted);
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+  .tog:active { transform: scale(0.96); }
+  .tog.on-arrived   { background: var(--sage);   border-color: var(--sage-dark);   color: var(--sage-text); }
+  .tog.on-noshow    { background: var(--rose);    border-color: var(--rose-dark);    color: var(--rose-text); }
+  .tog.on-cancelled { background: var(--amber);  border-color: var(--amber-dark);  color: var(--amber-text); }
+
+  /* EMPTY / LOADING */
+  .empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+  }
+  .empty .em-icon { font-size: 40px; margin-bottom: 10px; }
+  .empty p { font-size: 14px; line-height: 1.6; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 30px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  #toast.success { background: var(--sage-dark); }
+  #toast.error   { background: var(--rose-dark); }
+
+  /* LOADING SPINNER */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--peach-dark);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── SETUP SCREEN ── -->
+<div id="screen-setup" class="screen active">
+  <div class="setup-hero">
+    <span class="lotus">🪷</span>
+    <h1>Art of Living</h1>
+    <p>Event Check-In · Volunteer Portal</p>
+  </div>
+
+  <div class="setup-box">
+    <div class="field">
+      <label>Your Name</label>
+      <input type="text" id="inp-vol" placeholder="e.g. Priya S." autocomplete="name"/>
+    </div>
+    <div class="field">
+      <label>Apps Script Web App URL</label>
+      <input type="url" id="inp-url" placeholder="https://script.google.com/macros/s/…/exec"/>
+      <p class="hint">Paste the URL from your deployed Google Apps Script web app. This is reused each time you open the app.</p>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startApp()">Start Check-In 🌸</button>
+
+  <div class="schema-hint">
+    <p>📋 Google Sheet columns (row 1 = headers)</p>
+    <code>
+A: Name &nbsp;&nbsp; B: Guest Type &nbsp;&nbsp; C: Tier<br>
+D: Wristband Color &nbsp;&nbsp; E: Arrived<br>
+F: No Show &nbsp;&nbsp; G: Cancelled &nbsp;&nbsp; H: Checked In By
+    </code>
+  </div>
+</div>
+
+<!-- ── MAIN SCREEN ── -->
+<div id="screen-main" class="screen">
+  <div class="top-bar">
+    <span class="logo">🪷</span>
+    <div class="top-bar-text">
+      <h1>Event Check-In</h1>
+      <div class="event-url" id="event-url-label"></div>
+    </div>
+    <div class="vol-chip" id="vol-chip" onclick="changeSetup()" title="Tap to change setup">👤 <span id="vol-name-label"></span></div>
+  </div>
+
+  <div class="main-body">
+
+    <div class="counts-grid">
+      <div class="count-card c-arrived">
+        <div class="lbl">✅ Arrived</div>
+        <div class="num" id="ct-arrived">—</div>
+      </div>
+      <div class="count-card c-remaining">
+        <div class="lbl">⏳ Remaining</div>
+        <div class="num" id="ct-remaining">—</div>
+      </div>
+      <div class="count-card c-noshow">
+        <div class="lbl">🚫 No Show</div>
+        <div class="num" id="ct-noshow">—</div>
+      </div>
+      <div class="count-card c-cancelled">
+        <div class="lbl">❌ Cancelled</div>
+        <div class="num" id="ct-cancelled">—</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn" onclick="refreshCounts()">
+        <span class="icon">📊</span> Latest counts
+      </button>
+      <button class="action-btn" onclick="refreshList()">
+        <span class="icon">🔄</span> Refresh list
+      </button>
+    </div>
+
+    <div class="filter-scroll">
+      <div class="filter-tabs" id="filter-tabs">
+        <div class="f-tab active" onclick="setFilter('all',this)">All</div>
+        <div class="f-tab" onclick="setFilter('pending',this)">⏳ Pending</div>
+        <div class="f-tab" onclick="setFilter('arrived',this)">✅ Arrived</div>
+        <div class="f-tab" onclick="setFilter('noshow',this)">🚫 No Show</div>
+        <div class="f-tab" onclick="setFilter('cancelled',this)">❌ Cancelled</div>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search" placeholder="Search guest name…" oninput="renderList()"/>
+    </div>
+
+    <div class="guest-list" id="guest-list">
+      <div class="empty">
+        <div class="em-icon">🌸</div>
+        <p>Loading guest list…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ──
+let vol = '', url = '', guests = [], activeFilter = 'all';
+
+// ── SETUP ──
+function startApp() {
+  vol = document.getElementById('inp-vol').value.trim();
+  url = document.getElementById('inp-url').value.trim();
+  if (!vol) { alert('Please enter your name.'); return; }
+  if (!url || !url.startsWith('http')) { alert('Please enter a valid Apps Script URL.'); return; }
+  localStorage.setItem('aol_vol', vol);
+  localStorage.setItem('aol_url', url);
+  document.getElementById('vol-name-label').textContent = vol;
+  document.getElementById('event-url-label').textContent = url.replace('https://script.google.com/macros/s/','').slice(0,20)+'…';
+  switchScreen('screen-main');
+  refreshList();
+  refreshCounts();
+}
+
+function changeSetup() {
+  if (confirm('Go back to setup screen?')) switchScreen('screen-setup');
+}
+
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Restore from localStorage
+(function() {
+  const sv = localStorage.getItem('aol_vol');
+  const su = localStorage.getItem('aol_url');
+  if (sv) document.getElementById('inp-vol').value = sv;
+  if (su) document.getElementById('inp-url').value = su;
+})();
+
+// ── API ──
+async function api(params) {
+  const qs = new URLSearchParams(params).toString();
+  const r = await fetch(url + '?' + qs);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+async function refreshList() {
+  const el = document.getElementById('guest-list');
+  el.innerHTML = '<div class="empty"><div class="em-icon"><span class="spinner"></span></div><p>Loading guests…</p></div>';
+  try {
+    const d = await api({ action: 'getGuests' });
+    guests = d.guests || [];
+    renderList();
+    toast('Guest list updated 🌸', 'success');
+  } catch(e) {
+    el.innerHTML = '<div class="empty"><div class="em-icon">😕</div><p>Could not load guests.<br>Check your Apps Script URL.</p></div>';
+    toast('Load failed — check URL', 'error');
+  }
+}
+
+async function refreshCounts() {
+  try {
+    const d = await api({ action: 'getCounts' });
+    document.getElementById('ct-arrived').textContent   = d.arrived   ?? '—';
+    document.getElementById('ct-remaining').textContent = d.remaining  ?? '—';
+    document.getElementById('ct-noshow').textContent    = d.noshow     ?? '—';
+    document.getElementById('ct-cancelled').textContent = d.cancelled  ?? '—';
+    toast('Counts refreshed ✅', 'success');
+  } catch(e) {
+    toast('Could not fetch counts', 'error');
+  }
+}
+
+// ── FILTER & RENDER ──
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const el = document.getElementById('guest-list');
+  const filtered = guests.filter(g => {
+    if (q && !g.name.toLowerCase().includes(q)) return false;
+    if (activeFilter === 'arrived')   return g.arrived;
+    if (activeFilter === 'noshow')    return g.noshow;
+    if (activeFilter === 'cancelled') return g.cancelled;
+    if (activeFilter === 'pending')   return !g.arrived && !g.noshow && !g.cancelled;
+    return true;
+  });
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty"><div class="em-icon">🌼</div><p>No guests found</p></div>';
+    return;
+  }
+  el.innerHTML = filtered.map(gCard).join('');
+}
+
+function wbClass(color) {
+  if (!color) return '';
+  const c = color.toLowerCase();
+  if (c.includes('gold'))   return 'wb-gold';
+  if (c.includes('silver')) return 'wb-silver';
+  if (c.includes('green'))  return 'wb-green';
+  if (c.includes('blue'))   return 'wb-blue';
+  if (c.includes('red'))    return 'wb-red';
+  return '';
+}
+
+function gCard(g) {
+  const sc = g.arrived ? 's-arrived' : g.noshow ? 's-noshow' : g.cancelled ? 's-cancelled' : '';
+  const type = g.guestType || 'N/A';
+  const tier = g.tier || 'N/A';
+  const wb = g.wristband || '';
+  const by = g.checkedInBy
+    ? `<div class="g-by">Checked in by <span>${esc(g.checkedInBy)}</span></div>`
+    : '';
+  const wbBadge = wb
+    ? `<span class="badge badge-wb ${wbClass(wb)}">🎗 ${esc(wb)}</span>` : '';
+  return `
+  <div class="guest-card ${sc}" id="gc-${g.row}">
+    <div class="g-name">${esc(g.name)}</div>
+    <div class="g-badges">
+      <span class="badge badge-type">${esc(type)}</span>
+      <span class="badge badge-tier">${esc(tier)}</span>
+      ${wbBadge}
+    </div>
+    ${by}
+    <div class="toggle-row">
+      <div class="tog ${g.arrived ? 'on-arrived' : ''}" onclick="toggle(${g.row},'arrived')">✅<br>Arrived</div>
+      <div class="tog ${g.noshow ? 'on-noshow' : ''}" onclick="toggle(${g.row},'noshow')">🚫<br>No Show</div>
+      <div class="tog ${g.cancelled ? 'on-cancelled' : ''}" onclick="toggle(${g.row},'cancelled')">❌<br>Cancelled</div>
+    </div>
+  </div>`;
+}
+
+// ── TOGGLE ──
+async function toggle(row, field) {
+  const g = guests.find(x => x.row === row);
+  if (!g) return;
+  const newVal = !g[field];
+  g.arrived = false; g.noshow = false; g.cancelled = false;
+  g[field] = newVal;
+  g.checkedInBy = newVal ? vol : '';
+  renderList();
+  toast('Saving…');
+  try {
+    await api({
+      action: 'updateStatus',
+      row,
+      arrived:   g.arrived   ? 1 : 0,
+      noshow:    g.noshow    ? 1 : 0,
+      cancelled: g.cancelled ? 1 : 0,
+      checkedInBy: g.checkedInBy
+    });
+    toast(newVal ? `Marked ${field} ✅` : 'Cleared ✅', 'success');
+  } catch(e) {
+    toast('Save failed — check connection', 'error');
+  }
+}
+
+// ── HELPERS ──
+let toastTimer;
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 2500);
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
