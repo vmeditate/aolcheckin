@@ -155,23 +155,7 @@
   }
   .btn-start:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(224,112,80,0.25); }
 
-  .schema-hint {
-    width: 100%;
-    max-width: 440px;
-    margin-top: 1rem;
-    background: var(--amber);
-    border: 1px solid var(--amber-dark);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-  }
-  .schema-hint p { font-size: 12px; font-weight: 700; color: var(--amber-text); margin-bottom: 6px; }
-  .schema-hint code {
-    font-size: 11px;
-    color: var(--amber-text);
-    line-height: 1.9;
-    display: block;
-    font-family: monospace;
-  }
+
 
   /* ── MAIN SCREEN ── */
   #screen-main { min-height: 100vh; padding-bottom: 2rem; }
@@ -439,14 +423,6 @@
 
   <button class="btn-start" onclick="startApp()">Start Check-In 🌸</button>
 
-  <div class="schema-hint">
-    <p>📋 Google Sheet columns (row 1 = headers)</p>
-    <code>
-A: Name &nbsp;&nbsp; B: Guest Type &nbsp;&nbsp; C: Tier<br>
-D: Wristband Color &nbsp;&nbsp; E: Arrived<br>
-F: No Show &nbsp;&nbsp; G: Cancelled &nbsp;&nbsp; H: Checked In By
-    </code>
-  </div>
 </div>
 
 <!-- ── MAIN SCREEN ── -->
