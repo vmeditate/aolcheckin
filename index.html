@@ -174,7 +174,6 @@ function startApp() {
   document.getElementById('vol-name-label').textContent = vol;
   switchScreen('screen-main');
   refreshList();
-  refreshCounts();
 }
 
 function changeSetup() {
@@ -213,11 +212,19 @@ async function refreshList() {
       noshow:    g.noshow    === true || g.noshow    === 1 || g.noshow    === '1' || g.noshow    === 'TRUE',
       cancelled: g.cancelled === true || g.cancelled === 1 || g.cancelled === '1' || g.cancelled === 'TRUE',
     }));
+    const total     = guests.length;
+    const arrived   = guests.filter(g => g.arrived).length;
+    const noshow    = guests.filter(g => g.noshow).length;
+    const cancelled = guests.filter(g => g.cancelled).length;
+    const remaining = total - arrived - noshow - cancelled;
+    document.getElementById('ct-arrived').textContent   = arrived;
+    document.getElementById('ct-remaining').textContent = remaining;
+    document.getElementById('ct-noshow').textContent    = noshow;
+    document.getElementById('ct-cancelled').textContent = cancelled;
     const q = document.getElementById('search').value.trim();
     if (q) renderSearch(q);
     else el.innerHTML = '<div class="prompt-msg">Type a name above to find a guest.</div>';
-    refreshCounts();
-    toast('Guest list loaded ✓', 'success');
+    toast('Refreshed ✓', 'success');
   } catch(e) {
     el.innerHTML = '<div class="empty">Could not load guests.<br>Check your Apps Script URL.</div>';
     toast('Load failed', 'error');
