@@ -74,14 +74,13 @@
   /* GUEST CARD */
   .guest-list { display: flex; flex-direction: column; gap: 10px; }
   .guest-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px; }
-  .g-name { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-  .g-info { margin-bottom: 10px; }
-  .g-info-row { font-size: 13px; color: var(--text-muted); margin-bottom: 3px; }
-  .g-info-row span { font-weight: 600; color: var(--text); }
-  .g-status-tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; background: var(--accent-light); color: var(--accent); }
-  .g-status-tag.tag-arrived   { background: #E8F5E9; color: #2E7D32; }
-  .g-status-tag.tag-noshow    { background: #FEECEC; color: #B71C1C; }
-  .g-status-tag.tag-cancelled { background: #FFF8E1; color: #795548; }
+  .guest-card.is-marked { background: #EBF3FF; border-color: #90B8F0; }
+  .g-name { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .g-meta-line { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+  .g-meta-line span { font-weight: 600; color: var(--text); }
+  .g-wristband { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 12px; letter-spacing: 0.01em; }
+  .g-wristband .wb-label { font-weight: 400; font-size: 13px; color: var(--text-muted); }
+  .g-status-tag { display: inline-block; font-size: 13px; font-weight: 800; padding: 4px 12px; border-radius: 6px; margin-bottom: 8px; background: #FFE500; color: #333; letter-spacing: 0.01em; }
   .g-by { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
   .g-by strong { color: var(--text); }
   .toggle-row { display: flex; gap: 6px; border-top: 1px solid var(--border); padding-top: 10px; }
@@ -284,22 +283,22 @@ function gCard(g) {
   const tier = g.tier || 'N/A';
   const wb   = g.wristband || 'N/A';
 
+  const isMarked = g.arrived || g.noshow || g.cancelled;
+  const markedClass = isMarked ? 'is-marked' : '';
+
   let statusTag = '';
-  if (g.arrived)        statusTag = '<div class="g-status-tag tag-arrived">✓ Marked as Arrived</div>';
-  else if (g.noshow)    statusTag = '<div class="g-status-tag tag-noshow">✗ Marked as No Show</div>';
-  else if (g.cancelled) statusTag = '<div class="g-status-tag tag-cancelled">✗ Marked as Cancelled</div>';
+  if (g.arrived)        statusTag = '<div class="g-status-tag">✓ Marked as Arrived</div>';
+  else if (g.noshow)    statusTag = '<div class="g-status-tag">✗ Marked as No Show</div>';
+  else if (g.cancelled) statusTag = '<div class="g-status-tag">✗ Marked as Cancelled</div>';
 
   const byLine = g.checkedInBy
-    ? `<div class="g-by">Checked in by <strong>${esc(g.checkedInBy)}</strong></div>` : '';
+    ? `<div class="g-by">By <strong>${esc(g.checkedInBy)}</strong></div>` : '';
 
   return `
-  <div class="guest-card" id="gc-${g.row}">
+  <div class="guest-card ${markedClass}" id="gc-${g.row}">
     <div class="g-name">${esc(g.name)}</div>
-    <div class="g-info">
-      <div class="g-info-row">Guest Type: <span>${esc(type)}</span></div>
-      <div class="g-info-row">Tier: <span>${esc(tier)}</span></div>
-      <div class="g-info-row">Wristband: <span>${esc(wb)}</span></div>
-    </div>
+    <div class="g-meta-line"><span>${esc(type)}</span> · <span>${esc(tier)}</span></div>
+    <div class="g-wristband"><span class="wb-label">Wristband: </span>${esc(wb)}</div>
     ${statusTag}
     ${byLine}
     <div class="toggle-row">
