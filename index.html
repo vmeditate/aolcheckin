@@ -257,36 +257,40 @@ function scoreMatch(name, query) {
   const nameParts = n.split(/\s+/);
   const queryParts = q.split(/\s+/).filter(Boolean);
 
-  // Exact full name match
+  // Exact full name
   if (n === q) return 100;
 
-  // Every query word fully matches some name part
+  // Every query word exactly matches a name part
   if (queryParts.every(qw => nameParts.some(np => np === qw))) return 95;
 
   // Every query word is a prefix of some name part
   if (queryParts.every(qw => nameParts.some(np => np.startsWith(qw)))) return 90;
 
-  // Every query word is contained in some name part
+  // Every query word contained in some name part
   if (queryParts.every(qw => nameParts.some(np => np.includes(qw)))) return 85;
 
-  // Full name string contains the query
+  // Full name contains query
   if (n.includes(q)) return 80;
 
-  // Any single name part starts with the full query string
+  // Any name part starts with query
   if (nameParts.some(np => np.startsWith(q))) return 80;
 
-  // Any single name part contains the full query string
+  // Any name part contains query
   if (nameParts.some(np => np.includes(q))) return 75;
 
-  // Typo tolerance: for single-word query >= 3 chars,
-  // check if query matches name part with 1 character difference (simple edit distance)
-  if (queryParts.length === 1 && q.length >= 3) {
+  // Typo tolerance: check each name part against each query word
+  // Allow up to 2 edits for longer words, 1 edit for short words
+  for (const qw of queryParts) {
+    if (qw.length < 3) continue;
+    const maxDist = qw.length <= 5 ? 1 : 2;
     for (const np of nameParts) {
-      if (Math.abs(np.length - q.length) <= 2 && editDistance(np, q) <= 2) return 60;
+      if (Math.abs(np.length - qw.length) <= maxDist + 1) {
+        if (editDistance(np, qw) <= maxDist) return 65;
+      }
     }
   }
 
-  // At least one query word (>=3 chars) found anywhere in full name
+  // At least one query word (>=3 chars) appears anywhere in the full name
   if (queryParts.some(qw => qw.length >= 3 && n.includes(qw))) return 50;
 
   return 0;
@@ -294,7 +298,12 @@ function scoreMatch(name, query) {
 
 function editDistance(a, b) {
   const m = a.length, n = b.length;
-  const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+  const dp = [];
+  for (let i = 0; i <= m; i++) {
+    dp[i] = [i];
+    for (let j = 1; j <= n; j++) dp[i][j] = i === 0 ? j : 0;
+  }
+  for (let j = 1; j <= n; j++) dp[0][j] = j;
   for (let i = 1; i <= m; i++)
     for (let j = 1; j <= n; j++)
       dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
@@ -311,7 +320,7 @@ function renderSearch(query) {
     .map(g => ({ g, score: scoreMatch(g.name, query) }))
     .filter(x => x.score >= 50)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
+    .slice(0, 8);
 
   if (!scored.length) {
     el.innerHTML = '<div class="empty">No guest found matching <strong>"' + esc(query) + '"</strong>.<br>Try a different spelling.</div>';
