@@ -143,8 +143,8 @@
     </div>
 
     <div class="action-row">
-      <button class="action-btn" onclick="refreshCounts()">🎲 Latest counts</button>
-      <button class="action-btn" onclick="refreshList()">🔄 Refresh list</button>
+      <button class="action-btn" id="btn-counts" onclick="refreshCounts()">⚡ Latest counts</button>
+      <button class="action-btn" id="btn-refresh" onclick="refreshList()">🔄 Refresh list</button>
     </div>
 
     <div class="search-wrap">
@@ -200,6 +200,9 @@ async function api(params) {
 }
 
 async function refreshList() {
+  const btn = document.getElementById('btn-refresh');
+  btn.innerHTML = '<span class="spinner"></span> Loading…';
+  btn.disabled = true;
   const el = document.getElementById('guest-list');
   el.innerHTML = '<div class="empty"><span class="spinner"></span> Loading guests…</div>';
   try {
@@ -219,9 +222,14 @@ async function refreshList() {
     el.innerHTML = '<div class="empty">Could not load guests.<br>Check your Apps Script URL.</div>';
     toast('Load failed', 'error');
   }
+  btn.innerHTML = '🔄 Refresh list';
+  btn.disabled = false;
 }
 
 async function refreshCounts() {
+  const btn = document.getElementById('btn-counts');
+  btn.innerHTML = '<span class="spinner"></span> Fetching…';
+  btn.disabled = true;
   try {
     const d = await api({ action: 'getCounts' });
     document.getElementById('ct-arrived').textContent   = d.arrived   ?? '—';
@@ -230,6 +238,8 @@ async function refreshCounts() {
     document.getElementById('ct-cancelled').textContent = d.cancelled ?? '—';
     toast('Counts refreshed ✓', 'success');
   } catch(e) { toast('Could not fetch counts', 'error'); }
+  btn.innerHTML = '⚡ Latest counts';
+  btn.disabled = false;
 }
 
 function onSearch(val) {
