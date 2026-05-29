@@ -115,12 +115,12 @@
   <div class="setup-box">
     <div class="field">
       <label>Your Name</label>
-      <input type="text" id="inp-vol" placeholder="e.g. Sangi" autocomplete="name"/>
+      <input type="text" id="inp-vol" autocomplete="name"/>
     </div>
     <div class="field">
       <label>Apps Script Web App URL</label>
-      <input type="url" id="inp-url" placeholder="https://script.google.com/macros/s/…/exec"/>
-      <p class="hint">Paste the /exec URL from your Google Apps Script deployment.</p>
+      <input type="url" id="inp-url"/>
+      
     </div>
   </div>
   <button class="btn-start" onclick="startApp()">Start Check-In 🌸</button>
@@ -209,6 +209,7 @@ async function refreshList() {
     const q = document.getElementById('search').value.trim();
     if (q) renderSearch(q);
     else el.innerHTML = '<div class="prompt-msg">Type a name above to find a guest.</div>';
+    refreshCounts();
     toast('Guest list loaded ✓', 'success');
   } catch(e) {
     el.innerHTML = '<div class="empty">Could not load guests.<br>Check your Apps Script URL.</div>';
