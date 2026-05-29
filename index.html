@@ -348,7 +348,7 @@ function gCard(g) {
   return `
   <div class="guest-card ${markedClass}" id="gc-${g.row}">
     <div class="g-name">${esc(g.name)}</div>
-    <div class="g-meta-line"><span>${esc(type)}</span> · <span>${esc(tier)}</span></div>
+    <div class="g-meta-line">Category: <span>${esc(type)}</span> &nbsp;·&nbsp; Group: <span>${esc(tier)}</span></div>
     <div class="g-wristband"><span class="wb-label">Wristband: </span>${esc(wb)}</div>
     ${statusTag}
     ${byLine}
