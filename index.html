@@ -26,7 +26,6 @@
   #screen-setup { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
   #screen-setup.active { display: flex; }
 
-  /* SETUP */
   .setup-hero { text-align: center; margin-bottom: 2rem; }
   .lotus { font-size: 48px; display: block; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
@@ -39,31 +38,29 @@
   .field input { width: 100%; padding: 11px 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.2s; }
   .field input:focus { border-color: var(--accent); }
   .field input::placeholder { color: #BFB0A8; }
-  .hint { font-size: 12px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
   .btn-start { width: 100%; max-width: 420px; margin-top: 1rem; padding: 13px; background: var(--accent); border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; }
   .btn-start:active { opacity: 0.85; }
+  .btn-start:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  /* TOP BAR */
   .top-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 13px 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 20; }
   .top-bar .logo { font-size: 22px; }
   .top-bar-text { flex: 1; }
   .top-bar h1 { font-size: 15px; font-weight: 700; }
+  .top-bar .event-code { font-size: 11px; color: var(--text-muted); }
   .vol-chip { background: var(--accent-light); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--accent); cursor: pointer; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
 
   .main-body { padding: 1.25rem; }
 
-  /* COUNTS */
   .counts-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 1.1rem; }
   .count-cell { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 6px; text-align: center; }
   .count-cell .c-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 3px; }
   .count-cell .c-num { font-size: 20px; font-weight: 700; color: var(--text); }
 
-  /* BUTTONS */
   .action-row { display: flex; gap: 8px; margin-bottom: 1.1rem; }
   .action-btn { flex: 1; padding: 9px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--card); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; text-align: center; }
   .action-btn:active { background: var(--accent-light); }
+  .action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  /* SEARCH */
   .search-wrap { position: relative; margin-bottom: 1rem; }
   .search-wrap input { width: 100%; padding: 11px 40px 11px 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--text); background: var(--card); outline: none; transition: border-color 0.2s; }
   .search-wrap input:focus { border-color: var(--accent); }
@@ -71,7 +68,6 @@
   .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); cursor: pointer; display: none; background: none; border: none; padding: 4px; line-height: 1; }
   .clear-btn.visible { display: block; }
 
-  /* GUEST CARD */
   .guest-list { display: flex; flex-direction: column; gap: 10px; }
   .guest-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px; }
   .guest-card.is-marked { background: #EBF3FF; border-color: #90B8F0; }
@@ -117,24 +113,25 @@
       <input type="text" id="inp-vol" autocomplete="name"/>
     </div>
     <div class="field">
-      <label>Apps Script Web App URL</label>
-      <input type="url" id="inp-url"/>
-      
+      <label>Event Code</label>
+      <input type="text" id="inp-code" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/>
     </div>
   </div>
-  <button class="btn-start" onclick="startApp()">Start Check-In 🌸</button>
+  <button class="btn-start" id="btn-start" onclick="startApp()">Start Check-In 🌸</button>
 </div>
 
 <!-- MAIN -->
 <div id="screen-main" class="screen">
   <div class="top-bar">
     <span class="logo">🪷</span>
-    <div class="top-bar-text"><h1>Event Check-In</h1></div>
+    <div class="top-bar-text">
+      <h1>Event Check-In</h1>
+      <div class="event-code" id="event-code-label"></div>
+    </div>
     <div class="vol-chip" id="vol-chip" onclick="changeSetup()">👤 <span id="vol-name-label"></span></div>
   </div>
 
   <div class="main-body">
-
     <div class="counts-row">
       <div class="count-cell"><div class="c-lbl">Arrived</div><div class="c-num" id="ct-arrived">—</div></div>
       <div class="count-cell"><div class="c-lbl">Remaining</div><div class="c-num" id="ct-remaining">—</div></div>
@@ -155,29 +152,58 @@
     <div class="guest-list" id="guest-list">
       <div class="prompt-msg">Type a name above to find a guest.</div>
     </div>
-
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-let vol = '', url = '', guests = [];
+let vol = '', url = '', guests = [], eventCode = '';
 
-function startApp() {
+// ── SETUP ──
+async function startApp() {
   vol = document.getElementById('inp-vol').value.trim();
-  url = document.getElementById('inp-url').value.trim();
+  const code = document.getElementById('inp-code').value.trim().toLowerCase();
   if (!vol) { alert('Please enter your name.'); return; }
-  if (!url || !url.startsWith('http')) { alert('Please enter a valid Apps Script URL.'); return; }
-  localStorage.setItem('aol_vol', vol);
-  localStorage.setItem('aol_url', url);
-  document.getElementById('vol-name-label').textContent = vol;
-  switchScreen('screen-main');
-  refreshList();
+  if (!code) { alert('Please enter the event code.'); return; }
+
+  const btn = document.getElementById('btn-start');
+  btn.textContent = 'Connecting...';
+  btn.disabled = true;
+
+  try {
+    // Fetch config.json from same folder as the app
+    const base = window.location.href.split('?')[0].replace(/\/[^/]*$/, '/');
+    const res = await fetch(base + 'config.json?t=' + Date.now());
+    if (!res.ok) throw new Error('Config not found');
+    const config = await res.json();
+    url = config.events[code];
+    if (!url) {
+      alert('Event code "' + code + '" not found.\nPlease check with your organizer.');
+      btn.textContent = 'Start Check-In 🌸';
+      btn.disabled = false;
+      return;
+    }
+    eventCode = code;
+    localStorage.setItem('aol_vol', vol);
+    localStorage.setItem('aol_code', code);
+    document.getElementById('vol-name-label').textContent = vol;
+    document.getElementById('event-code-label').textContent = code;
+    switchScreen('screen-main');
+    refreshList();
+  } catch(e) {
+    alert('Could not load event config. Check your connection and try again.');
+    btn.textContent = 'Start Check-In 🌸';
+    btn.disabled = false;
+  }
 }
 
 function changeSetup() {
-  if (confirm('Go back to setup screen?')) switchScreen('screen-setup');
+  if (confirm('Go back to setup screen?')) {
+    url = '';
+    eventCode = '';
+    switchScreen('screen-setup');
+  }
 }
 
 function switchScreen(id) {
@@ -185,13 +211,15 @@ function switchScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
+// Restore saved values on load
 (function() {
   const sv = localStorage.getItem('aol_vol');
-  const su = localStorage.getItem('aol_url');
+  const sc = localStorage.getItem('aol_code');
   if (sv) document.getElementById('inp-vol').value = sv;
-  if (su) document.getElementById('inp-url').value = su;
+  if (sc) document.getElementById('inp-code').value = sc;
 })();
 
+// ── API ──
 async function api(params) {
   const r = await fetch(url + '?' + new URLSearchParams(params));
   if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -226,7 +254,7 @@ async function refreshList() {
     else el.innerHTML = '<div class="prompt-msg">Type a name above to find a guest.</div>';
     toast('Refreshed ✓', 'success');
   } catch(e) {
-    el.innerHTML = '<div class="empty">Could not load guests.<br>Check your Apps Script URL.</div>';
+    el.innerHTML = '<div class="empty">Could not load guests.<br>Check your event code or connection.</div>';
     toast('Load failed', 'error');
   }
   btn.innerHTML = '🔄 Refresh list';
@@ -249,6 +277,7 @@ async function refreshCounts() {
   btn.disabled = false;
 }
 
+// ── SEARCH ──
 function onSearch(val) {
   document.getElementById('clear-btn').classList.toggle('visible', val.length > 0);
   if (!val.trim()) {
@@ -270,33 +299,15 @@ function scoreMatch(name, query) {
   const n = name.toLowerCase().trim();
   const q = query.toLowerCase().trim();
   if (!q) return 0;
-
   const nameParts = n.split(/\s+/);
   const queryParts = q.split(/\s+/).filter(Boolean);
-
-  // Exact full name
   if (n === q) return 100;
-
-  // Every query word exactly matches a name part
   if (queryParts.every(qw => nameParts.some(np => np === qw))) return 95;
-
-  // Every query word is a prefix of some name part
   if (queryParts.every(qw => nameParts.some(np => np.startsWith(qw)))) return 90;
-
-  // Every query word contained in some name part
   if (queryParts.every(qw => nameParts.some(np => np.includes(qw)))) return 85;
-
-  // Full name contains query
   if (n.includes(q)) return 80;
-
-  // Any name part starts with query
   if (nameParts.some(np => np.startsWith(q))) return 80;
-
-  // Any name part contains query
   if (nameParts.some(np => np.includes(q))) return 75;
-
-  // Typo tolerance: check each name part against each query word
-  // Allow up to 2 edits for longer words, 1 edit for short words
   for (const qw of queryParts) {
     if (qw.length < 3) continue;
     const maxDist = qw.length <= 5 ? 1 : 2;
@@ -306,10 +317,7 @@ function scoreMatch(name, query) {
       }
     }
   }
-
-  // At least one query word (>=3 chars) appears anywhere in the full name
   if (queryParts.some(qw => qw.length >= 3 && n.includes(qw))) return 50;
-
   return 0;
 }
 
@@ -338,7 +346,6 @@ function renderSearch(query) {
     .filter(x => x.score >= 50)
     .sort((a, b) => b.score - a.score)
     .slice(0, 8);
-
   if (!scored.length) {
     el.innerHTML = '<div class="empty">No guest found matching <strong>"' + esc(query) + '"</strong>.<br>Try a different spelling.</div>';
     return;
@@ -350,18 +357,14 @@ function gCard(g) {
   const type = g.guestType || 'N/A';
   const tier = g.tier || 'N/A';
   const wb   = g.wristband || 'N/A';
-
   const isMarked = !!(g.arrived || g.noshow || g.cancelled);
   const markedClass = isMarked ? 'is-marked' : '';
-
   let statusTag = '';
   if (g.arrived)        statusTag = '<div class="g-status-tag">✓ Marked as Arrived</div>';
   else if (g.noshow)    statusTag = '<div class="g-status-tag">✗ Marked as No Show</div>';
   else if (g.cancelled) statusTag = '<div class="g-status-tag">✗ Marked as Cancelled</div>';
-
   const byLine = g.checkedInBy
     ? `<div class="g-by">By <strong>${esc(g.checkedInBy)}</strong></div>` : '';
-
   return `
   <div class="guest-card ${markedClass}" id="gc-${g.row}">
     <div class="g-name">${esc(g.name)}</div>
@@ -383,8 +386,6 @@ async function toggle(row, field) {
   const newVal = !g[field];
   g.arrived = false; g.noshow = false; g.cancelled = false;
   g[field] = newVal;
-
-  // Handle multiple volunteers: append name if not already listed
   if (newVal) {
     const existing = g.checkedInBy ? g.checkedInBy.split(',').map(n => n.trim()) : [];
     if (!existing.includes(vol)) existing.push(vol);
@@ -392,7 +393,6 @@ async function toggle(row, field) {
   } else {
     g.checkedInBy = '';
   }
-
   const q = document.getElementById('search').value.trim();
   if (q) renderSearch(q);
   toast('Saving…');
