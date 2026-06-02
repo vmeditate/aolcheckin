@@ -23,13 +23,12 @@
 
   .screen { display: none; }
   .screen.active { display: block; }
-  #screen-setup { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
+  #screen-setup { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1.25rem; }
   #screen-setup.active { display: flex; }
 
-  .setup-hero { text-align: center; margin-bottom: 2rem; }
-  .lotus { font-size: 48px; display: block; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-  .setup-hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .setup-hero { text-align: center; margin-bottom: 1.5rem; }
+  .aol-logo { width: 140px; height: auto; display: block; margin: 0 auto 12px; }
+  .setup-hero h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
   .setup-hero p  { font-size: 14px; color: var(--text-muted); }
   .setup-box { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; width: 100%; max-width: 420px; }
   .field { margin-bottom: 1.1rem; }
@@ -103,9 +102,9 @@
 <!-- SETUP -->
 <div id="screen-setup" class="screen active">
   <div class="setup-hero">
-    <span class="lotus">🪷</span>
-    <h1>Art of Living</h1>
-    <p>Event Check-In · Volunteer Portal</p>
+    <img src="aol_logo.png" alt="Art of Living" class="aol-logo"/>
+    <h1>Event Check-In</h1>
+    <p>Volunteer Portal</p>
   </div>
   <div class="setup-box">
     <div class="field">
