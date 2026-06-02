@@ -1,3 +1,8 @@
+A quick reminder of what to do before each new event:
+  New Google Sheet → update SHEET_ID in Apps Script → deploy new version
+  Add the event code to config.json → commit and push to GitHub
+  Send volunteers: "tiny.cc/aolcheckin — Today's code: xyz"
+
 Art of Living — Event Check-In App
 A mobile-friendly volunteer check-in app backed by Google Sheets. Multiple volunteers can use it simultaneously from their phones. All status changes (Arrived, No Show, Cancelled) write instantly to the sheet, and direct edits in the sheet reflect in the app on next refresh. A Summary tab is auto-maintained with live counts.
 
