@@ -9,6 +9,8 @@ A mobile-friendly volunteer check-in app backed by Google Sheets. Multiple volun
 Requirements
 The app is a single `index.html` — no build step, no dependencies. It talks to a Google Apps Script Web App deployed from the event's Google Sheet. The script must be deployed as a web app, executed as the owner, accessible by anyone. The resulting `/exec` URL is what volunteers paste into the app on first launch (saved in localStorage after that).
 
+Config - Google Apps Script /exec URLs. Add one line per event inside the "events": {} block. All event codes must be lowercase. The Apps Script URL comes from deploying your Google Sheet as a Web App and copying the /exec link. To add a new event: deploy the sheet, copy the URL, add a lowercase code + URL pair, save and re-upload.
+
 The Google Sheet needs row 1 as headers. Required header names: `Name`, `Guest Type`, `Tier`, `Wristband Color`, `Arrived`, `No Show`, `Cancelled`, `Checked In By`. Columns E/F/G should be Sheets checkboxes. Column order doesn't matter — the script resolves everything by header name.
 Per Event
 
