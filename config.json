@@ -1,5 +1,6 @@
 {
   "events": {
-    "IAI": "https://script.google.com/macros/s/AKfycbz1JSWrTdsMahTtusNksLlK7n0noZUV2xTakbJ2RjAtAmEy06tEwkSc-piIyNu8aGinuQ/exec"
+    "IAI": "https://script.google.com/macros/s/AKfycbz1JSWrTdsMahTtusNksLlK7n0noZUV2xTakbJ2RjAtAmEy06tEwkSc-piIyNu8aGinuQ/exec",
+    "siw": "https://script.google.com/macros/s/AKfycbyfKpfbyjJ34_rrK0YBhTGfeMKN_Ke-z_Y5mT3y0ZTayHYQVuSOWTtsECkvic7tkRtloQ/exec"
   }
 }
