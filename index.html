@@ -307,20 +307,17 @@ function scoreMatch(name, query) {
   // Every query word matches a full name part exactly
   if (queryParts.every(qw => nameParts.some(np => np === qw))) return 95;
 
-  // Every query word matches the start of some name part
-  if (queryParts.every(qw => nameParts.some(np => np.startsWith(qw)))) return 90;
+  // Every query word matches the START of the first name → highest prefix rank
+  if (queryParts.every(qw => nameParts[0].startsWith(qw))) return 92;
+
+  // Every query word matches the start of any name part (last/middle name match)
+  if (queryParts.every(qw => nameParts.some(np => np.startsWith(qw)))) return 88;
 
   // Every query word appears somewhere inside a name part
   if (queryParts.every(qw => nameParts.some(np => np.includes(qw)))) return 85;
 
   // Full query string appears anywhere in the full name
   if (n.includes(q)) return 82;
-
-  // Query matches the START of the first name (highest priority single-word match)
-  if (nameParts[0].startsWith(q)) return 80;
-
-  // Query matches the start of any OTHER name part (last name, middle name)
-  if (nameParts.slice(1).some(np => np.startsWith(q))) return 72;
 
   // Query appears inside any name part
   if (nameParts.some(np => np.includes(q))) return 65;
@@ -340,6 +337,20 @@ function scoreMatch(name, query) {
   if (queryParts.some(qw => qw.length >= 3 && n.includes(qw))) return 50;
 
   return 0;
+}
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  const dp = [];
+  for (let i = 0; i <= m; i++) {
+    dp[i] = [i];
+    for (let j = 1; j <= n; j++) dp[i][j] = i === 0 ? j : 0;
+  }
+  for (let j = 1; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
 }
 
 function editDistance(a, b) {
