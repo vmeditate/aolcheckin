@@ -171,7 +171,6 @@ async function startApp() {
   btn.disabled = true;
 
   try {
-    // Fetch config.json from same folder as the app
     const base = window.location.href.split('?')[0].replace(/\/[^/]*$/, '/');
     const res = await fetch(base + 'config.json?t=' + Date.now());
     if (!res.ok) throw new Error('Config not found');
@@ -294,29 +293,52 @@ function clearSearch() {
   inp.focus();
 }
 
+// ── SCORING: first name prefix beats last name prefix ──
 function scoreMatch(name, query) {
   const n = name.toLowerCase().trim();
   const q = query.toLowerCase().trim();
   if (!q) return 0;
   const nameParts = n.split(/\s+/);
   const queryParts = q.split(/\s+/).filter(Boolean);
+
+  // Exact full name match
   if (n === q) return 100;
+
+  // Every query word matches a full name part exactly
   if (queryParts.every(qw => nameParts.some(np => np === qw))) return 95;
+
+  // Every query word matches the start of some name part
   if (queryParts.every(qw => nameParts.some(np => np.startsWith(qw)))) return 90;
+
+  // Every query word appears somewhere inside a name part
   if (queryParts.every(qw => nameParts.some(np => np.includes(qw)))) return 85;
-  if (n.includes(q)) return 80;
-  if (nameParts.some(np => np.startsWith(q))) return 80;
-  if (nameParts.some(np => np.includes(q))) return 75;
+
+  // Full query string appears anywhere in the full name
+  if (n.includes(q)) return 82;
+
+  // Query matches the START of the first name (highest priority single-word match)
+  if (nameParts[0].startsWith(q)) return 80;
+
+  // Query matches the start of any OTHER name part (last name, middle name)
+  if (nameParts.slice(1).some(np => np.startsWith(q))) return 72;
+
+  // Query appears inside any name part
+  if (nameParts.some(np => np.includes(q))) return 65;
+
+  // Fuzzy / typo tolerance
   for (const qw of queryParts) {
     if (qw.length < 3) continue;
     const maxDist = qw.length <= 5 ? 1 : 2;
     for (const np of nameParts) {
       if (Math.abs(np.length - qw.length) <= maxDist + 1) {
-        if (editDistance(np, qw) <= maxDist) return 65;
+        if (editDistance(np, qw) <= maxDist) return 55;
       }
     }
   }
+
+  // Partial query word match across parts
   if (queryParts.some(qw => qw.length >= 3 && n.includes(qw))) return 50;
+
   return 0;
 }
 
