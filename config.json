@@ -1,6 +1,7 @@
 {
   "events": {
-    "emm20": "https://script.google.com/macros/s/AKfycbxA8ahUR_jda1Lf2OYmiosNDVob7_fg1fAWa8eEZSl_LYeE4P1jYlc6nXibZldHtDUz1g/exec"
+    "emm20": "https://script.google.com/macros/s/AKfycbxA8ahUR_jda1Lf2OYmiosNDVob7_fg1fAWa8eEZSl_LYeE4P1jYlc6nXibZldHtDUz1g/exec",
+    "evtgst":"https://script.google.com/macros/s/AKfycbwB9u_BhfQK-DhJ2DePYkHh0kJhITBTtsBQtz37-1flWpUaA2ydc-g2bgan8CbxrpdA1A/exec"
     
   }
 }
